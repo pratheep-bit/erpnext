@@ -802,13 +802,20 @@ def check_freezing_date(posting_date, adv_adj=False):
 				)
 
 
-def validate_against_pcv(is_opening, posting_date, company):
-	if is_opening and frappe.db.exists("Period Closing Voucher", {"docstatus": 1, "company": company}):
+def validate_opening_entry_against_pcv(company):
+	if frappe.db.exists("Period Closing Voucher", {"docstatus": 1, "company": company}):
 		frappe.throw(
-			_("Opening Entry can not be created after Period Closing Voucher is created."),
+			_(
+				"A Period Closing Voucher is already submitted and an Opening Entry can no longer be created. {0} to learn more."
+			).format(
+				'<a href="https://docs.frappe.io/erpnext/period-closing-voucher#14-pcv-and-opening-entries" target="_blank" rel="noopener">'
+				+ _("Read the docs")
+				+ "</a>"
+			),
 			title=_("Invalid Opening Entry"),
 		)
 
+<<<<<<< HEAD
 	# Local import so you don't have to touch file-level imports
 	from frappe.query_builder.functions import Max
 
@@ -819,6 +826,16 @@ def validate_against_pcv(is_opening, posting_date, company):
 		.select(Max(pcv.period_end_date))
 		.where((pcv.docstatus == 1) & (pcv.company == company))
 	).run(pluck=True)[0]
+=======
+
+def validate_against_pcv(is_opening, posting_date, company):
+	if is_opening:
+		validate_opening_entry_against_pcv(company)
+
+	last_pcv_date = frappe.db.get_value(
+		"Period Closing Voucher", {"docstatus": 1, "company": company}, [{"MAX": "period_end_date"}]
+	)
+>>>>>>> f8aa4c730c (fix(journal entry): validate opening entry against pcv on save)
 
 	if last_pcv_date and getdate(posting_date) <= getdate(last_pcv_date):
 		message = _("Books have been closed till the period ending on {0}.").format(formatdate(last_pcv_date))
