@@ -2442,6 +2442,12 @@ def get_negative_outstanding_invoices(
 
 @frappe.whitelist()
 def get_party_details(company: str, party_type: str, party: str, date: str, cost_center: str | None = None):
+	if party_type not in ("Customer", "Supplier", "Employee", "Shareholder"):
+		frappe.throw(_("Invalid party type: {0}").format(party_type), frappe.PermissionError)
+
+	frappe.has_permission("Payment Entry", throw=True)
+	frappe.has_permission(party_type, ptype="read", doc=party, throw=True)
+
 	bank_account = ""
 	party_bank_account = ""
 
