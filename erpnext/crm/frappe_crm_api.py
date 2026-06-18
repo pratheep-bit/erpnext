@@ -160,6 +160,8 @@ CUSTOMER_ALLOWED_FIELDS = {
 
 @frappe.whitelist()
 def create_customer(customer_data: dict | None = None):
+	frappe.has_permission("Customer", "create", throw=True)
+
 	if not customer_data:
 		customer_data = frappe.form_dict
 
