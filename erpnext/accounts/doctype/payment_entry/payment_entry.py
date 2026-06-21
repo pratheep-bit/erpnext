@@ -871,7 +871,7 @@ class PaymentEntry(AccountsController):
 					.set(ps.base_paid_amount, ps.base_paid_amount - base_paid_amount)
 					.set(ps.discounted_amount, ps.discounted_amount - discounted_amt)
 					.set(ps.outstanding, ps.outstanding + allocated_amount)
-					.set(ps.base_outstanding, ps.base_outstanding - base_outstanding)
+					.set(ps.base_outstanding, ps.base_outstanding + base_outstanding)
 					.where((ps.parent == key[1]) & (ps.payment_term == key[0]))
 				).run()
 			else:
