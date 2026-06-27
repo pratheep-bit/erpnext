@@ -243,13 +243,25 @@ const BankTransactionListView = () => {
 
     }, [data, search, amountFilter, typeFilter, status])
 
+    const transactionListDescription = _(
+        "Below is a list of all bank transactions imported in the system for the bank account {0} between {1} and {2}."
+    )
+    
+    const [beforeAccount = "", afterAccount = ""] = transactionListDescription.split("{0}")
+    const [betweenAccountAndFrom = "", afterFrom = ""] = afterAccount.split("{1}")
+    const [betweenFromAndTo = "", afterTo = ""] = afterFrom.split("{2}")
+
     return <div className="space-y-2 py-2">
 
         <div className="flex gap-2 justify-between items-center">
             <Paragraph className="text-sm">
-                <span dangerouslySetInnerHTML={{
-                    __html: _("Below is a list of all bank transactions imported in the system for the bank account {0} between {1} and {2}.", [`<strong>${bankAccount?.account_name}</strong>`, `<strong>${formattedFromDate}</strong>`, `<strong>${formattedToDate}</strong>`])
-                }} />
+                {beforeAccount}
+                <strong>{bankAccount?.account_name}</strong>
+                {betweenAccountAndFrom}
+                <strong>{formattedFromDate}</strong>
+                {betweenFromAndTo}
+                <strong>{formattedToDate}</strong>
+                {afterTo}
             </Paragraph>
 
             <Button size='md' variant='subtle' asChild>
