@@ -216,6 +216,18 @@ class TestLead(ERPNextTestSuite):
 		lead = frappe.new_doc("Lead")
 		self.assertRaises(frappe.ValidationError, lead.set_lead_name)
 
+	def test_add_lead_to_prospect_permission_check(self):
+		from erpnext.crm.doctype.lead.lead import add_lead_to_prospect
+
+		lead = make_lead()
+		prospect = frappe.new_doc("Prospect")
+		prospect.company_name = "_Test Prospect Co"
+		prospect.insert()
+		self.addCleanup(frappe.set_user, "Administrator")
+		frappe.set_user("Guest")
+		with self.assertRaises(frappe.PermissionError):
+			add_lead_to_prospect(lead.name, prospect.name)
+
 
 def create_event(subject, starts_on, reference_type, reference_name):
 	event = frappe.new_doc("Event")
