@@ -666,6 +666,8 @@ def create_duplicate_project(prev_doc: str | dict, project_name: str):
 	import json
 
 	prev_doc = frappe.parse_json(prev_doc)
+	if prev_doc.get("name"):
+		frappe.has_permission("Project", "read", prev_doc.get("name"), throw=True)
 
 	if project_name == prev_doc.get("name"):
 		frappe.throw(_("Use a name that is different from previous project name"))

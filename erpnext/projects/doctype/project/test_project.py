@@ -27,6 +27,15 @@ class TestProject(ERPNextTestSuite):
 		self.assertIsInstance(data, dict)
 		self.assertGreaterEqual(sum(data.values()), 1)
 
+	def test_create_duplicate_project_permission_check(self):
+		from erpnext.projects.doctype.project.project import create_duplicate_project
+
+		project = make_project({"project_name": "_Test Secret Project", "company": "_Test Company"})
+		self.addCleanup(frappe.set_user, "Administrator")
+		frappe.set_user("Guest")
+		with self.assertRaises(frappe.PermissionError):
+			create_duplicate_project(project.as_dict(), "_Test Duplicated Project")
+
 	def test_project_total_costing_and_billing_amount(self):
 		from erpnext.projects.doctype.timesheet.test_timesheet import make_timesheet
 		from erpnext.setup.doctype.employee.test_employee import make_employee
