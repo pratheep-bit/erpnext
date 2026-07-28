@@ -40,6 +40,13 @@ from erpnext.tests.utils import ERPNextTestSuite
 
 
 class TestSalesOrder(ERPNextTestSuite):
+	def test_make_work_orders_permission_check(self):
+		so = make_sales_order()
+		self.addCleanup(frappe.set_user, "Administrator")
+		frappe.set_user("Guest")
+		with self.assertRaises(frappe.PermissionError):
+			make_work_orders(items=json.dumps({"items": []}), sales_order=so.name, company="_Test Company")
+
 	@ERPNextTestSuite.change_settings(
 		"Stock Settings",
 		{
