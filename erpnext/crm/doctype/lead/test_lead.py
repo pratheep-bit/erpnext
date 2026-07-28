@@ -216,6 +216,15 @@ class TestLead(ERPNextTestSuite):
 		lead = frappe.new_doc("Lead")
 		self.assertRaises(frappe.ValidationError, lead.set_lead_name)
 
+	def test_edit_note_permission_check(self):
+		lead = make_lead()
+		lead.add_note("Initial Note")
+		note_id = lead.notes[0].name
+		self.addCleanup(frappe.set_user, "Administrator")
+		frappe.set_user("Guest")
+		with self.assertRaises(frappe.PermissionError):
+			lead.edit_note("Edited Note", note_id)
+
 
 def create_event(subject, starts_on, reference_type, reference_name):
 	event = frappe.new_doc("Event")

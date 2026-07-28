@@ -256,6 +256,7 @@ class CRMNote(Document):
 
 	@frappe.whitelist()
 	def edit_note(self, note: str, row_id: str):
+		self.check_permission("write")
 		for d in self.notes:
 			if cstr(d.name) == row_id:
 				d.note = note
