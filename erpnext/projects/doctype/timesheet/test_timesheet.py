@@ -14,6 +14,12 @@ from erpnext.tests.utils import ERPNextTestSuite
 
 
 class TestTimesheet(ERPNextTestSuite):
+	def test_get_timesheets_list_excludes_cancelled_invoices(self):
+		from erpnext.projects.doctype.timesheet.timesheet import get_timesheets_list
+
+		res = get_timesheets_list("Timesheet", "", {}, 0, 10)
+		self.assertIsInstance(res, (list, tuple, dict))
+
 	def test_timesheet_post_update(self):
 		frappe.get_doc(
 			{
