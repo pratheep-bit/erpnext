@@ -16,6 +16,13 @@ class TestQuotation(ERPNextTestSuite):
 	def setUp(self):
 		self.load_test_records("Quotation")
 
+	def test_declare_enquiry_lost_permission_check(self):
+		qo = make_quotation()
+		self.addCleanup(frappe.set_user, "Administrator")
+		frappe.set_user("Guest")
+		with self.assertRaises(frappe.PermissionError):
+			qo.declare_enquiry_lost([], [])
+
 	def test_update_child_quotation_add_item(self):
 		from erpnext.stock.doctype.item.test_item import make_item
 
